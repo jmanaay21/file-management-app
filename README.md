@@ -28,8 +28,12 @@ Must run and be developed in LinuxOS
 - Use LDAP as an Authentication and Authorization system
 
 ### Resources
-[Manage and use LDAP](https://www.digitalocean.com/community/tutorials/how-to-manage-and-use-ldap-servers-with-openldap-utilities)
-[MySQL Community version](https://www.mysql.com/products/community/#:~:text=MySQL%20Community%20Edition%20is%20the,community%20of%20open%20source%20developers.)
+
+- [Manage and use LDAP](https://www.digitalocean.com/community/tutorials/how-to-manage-and-use-ldap-servers-with-openldap-utilities)
+
+- [MySQL Community version](https://www.mysql.com/products/community/#:~:text=MySQL%20Community%20Edition%20is%20the,community%20of%20open%20source%20developers.)
 [MySQL Manual + Guide](https://dev.mysql.com/doc/refman/8.0/en/)
-[Connecting MySQL to Visual Studio](https://dev.mysql.com/doc/visual-studio/en/)
-[MySQL to Python](https://dev.mysql.com/doc/connector-python/en/)
+
+- [Connecting MySQL to Visual Studio](https://dev.mysql.com/doc/visual-studio/en/)
+
+- [MySQL to Python](https://dev.mysql.com/doc/connector-python/en/)

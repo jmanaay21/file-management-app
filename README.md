@@ -26,6 +26,9 @@ Must run and be developed in LinuxOS
 ### Approach
 - MySQL approach for data storage/file manipulation
 - Use LDAP as an Authentication and Authorization system
+- Create server on home PC
+- Connect to it and make sure you can see contents and access
+- Maybe use OpenVPN for server security
 
 
 ### Resources
@@ -38,4 +41,5 @@ Must run and be developed in LinuxOS
 
 - [Connecting MySQL to Visual Studio](https://dev.mysql.com/doc/visual-studio/en/)
 
-- [MySQL to Python](https://dev.mysql.com/doc/connector-python/en/)
+- [MySQL to Python](https://dev.mysql.com/doc/connector-python/en/) and [example](https://dev.mysql.com/doc/
+connector-python/en/connector-python-example-connecting.html)

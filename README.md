@@ -42,3 +42,5 @@ Must run and be developed in LinuxOS
 - [Connecting MySQL to Visual Studio](https://dev.mysql.com/doc/visual-studio/en/)
 
 - [MySQL to Python](https://dev.mysql.com/doc/connector-python/en/) and [example](https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html)
+
+- [Python to LDAP](https://www.python-ldap.org/en/python-ldap-3.4.2/)

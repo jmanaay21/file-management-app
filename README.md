@@ -32,6 +32,7 @@ Must run and be developed in LinuxOS
 
 
 ### Resources
+- [Getting started with MySQL](https://dev.mysql.com/doc/mysql-apt-repo-quick-guide/en/)
 
 - [Manage and use LDAP](https://www.digitalocean.com/community/tutorials/how-to-manage-and-use-ldap-servers-with-openldap-utilities)
 
@@ -44,3 +45,27 @@ Must run and be developed in LinuxOS
 - [MySQL to Python](https://dev.mysql.com/doc/connector-python/en/) and [example](https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html)
 
 - [Python to LDAP](https://www.python-ldap.org/en/python-ldap-3.4.2/)
+
+key thats unique and object that represents the file
+user table (name and password) and way to associate user with roles)
+
+Think about the drawing and blowout the details of the design first
+figure out what the design should be first. If web gui think about 
+each one, what are the interactions and write them out. Think about 
+interactions between web server and gui
+
+## Server Process so far 
+
+### Starting, stopping MySQL server
+
+Start MySQL server
+`systemctl start mysql`
+
+End MySQL Server
+`systemctl stop mysql`
+
+Check Status of Server
+`systemctl status mysql`
+
+Restart MySQL Server
+`systemctl restart mysql`

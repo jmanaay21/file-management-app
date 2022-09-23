@@ -1,7 +1,14 @@
+"""
+This is a test py file about decoding and encoding
+user data. These functions will later be implemented
+When files are being transported to and from the client
+and server database.
+"""
 import base64
 
 
 def decodedData(b64EncodedData):
+    """Decode encoded data when received"""
     decodedBytes = base64.b64decode(b64EncodedData)
     print(decodedBytes)
     with open("exampleSaveData.md", "w") as file:
@@ -9,6 +16,7 @@ def decodedData(b64EncodedData):
 
 
 def encodeFile(pathToFile):
+    """Encode file before sending it off to server"""
     data = open(pathToFile, "r").read()
     with open(pathToFile, "r") as file:
         encoded = base64.b64encode(bytes(file.read(), "UTF-8"))

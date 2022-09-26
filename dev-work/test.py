@@ -60,7 +60,7 @@ def file_info():
     print(f'file: {file_name}{file_ext}\n'
         + f'file path: {file_path}')
 
-# Function to decide whether to upload or delete from Database
+# Function to decide whether to upload or delete from database
 def database_action(user_args):
     """Case function decides to up, down or delete, 
     once case is decided, user access should be checked"""
@@ -68,7 +68,7 @@ def database_action(user_args):
         case 1:
             print('option 1, upload:')
             file_info()
-
+            
         case 2:
             return 'option 2, download:'
 

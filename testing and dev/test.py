@@ -4,7 +4,7 @@ function would be laid out and work within the server
 as well as how the encoding and decoding might be laid out
 
 TO DO:
-- Move encode and decode to seperate file 
+- Move encode and decode to seperate file
     (maybe even a seperate class)
 - Add different users/ access control
 - Implement encode and decode functions to
@@ -36,6 +36,7 @@ except Error as e:
     print(e)
 
 def file_info():
+    """Get user info and store it for mysql use"""
     file_name = input("Insert file name with extension (Include the dot): ")
     file_name.split('.')
     pathToFile = input("Insert file path to encode and upload:\n")

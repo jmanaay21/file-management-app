@@ -26,7 +26,8 @@ Must run and be developed in LinuxOS
 ### Approach
 - MySQL approach for data storage/file manipulation
 - Use LDAP as an Authentication and Authorization system
-- Create server on home PC
+- Docker will be used as a container for LDAP
+- Create local mySQL server on VM (Maybe create a remote server on home PC)
 - Connect to it and make sure you can see contents and access
 - Maybe use OpenVPN for server security
 

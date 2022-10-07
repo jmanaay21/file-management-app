@@ -114,12 +114,12 @@ def encodeFile(file_path):
 
 def upload(file_name, file_ext, file_path):
     """Create mysql string for uploading to server"""
-    data = open(file_path, "r").read()
+    data = open(file_path, "r", encoding="utf8").read()
     publicKey, PrivateKey = rsa.newkeys(512)
     encData = rsa.encrypt(data.encode(), publicKey)
     upload_command = f"INSERT INTO file_store (filename, extension, filecontent) \
         VALUES {file_name}, {file_ext}, {encData}"
-        
+
     print(encData)
     print(upload_command)
 

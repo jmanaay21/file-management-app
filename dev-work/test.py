@@ -6,14 +6,28 @@ as well as how the encoding and decoding might be laid out
 TO DO:
 - Move encode and decode to seperate file
     (maybe even a seperate class)
-- Add different users/ access control
+- Add different users/ access control (LDAP)
 - Implement encode and decode functions to
-    add to file tables from python script
+    add to file tables from python 
+- Create strinf builder for a sql command
+    so user doesn't have direct access to 
+    inserting mysql commands
+
+STRUCTURE
+Upload:
+- Take parameters
+- Read and encode file
+- Encrypt file contents
+- Make sql command to store info in server
+- Execute command
+
+
 """
+import rsa
 import base64
 from getpass import getpass
-
 from mysql.connector import Error, connect
+
 
 
 def main():
@@ -42,12 +56,24 @@ def main():
                 user_args = int(input("\nWhat would you like to do?\n"
                 + "1 for upload, 2 for download, 3 for delete: "))
 
-                # Choose action for database
-                database_action(user_args)
+                # Case function decides to up, down or delete,
+                # once case is decided, user access should be checked
+                match user_args:
+                    case 1:
+                        print('option 1, upload:')
+                        file_info()
+                        upload(file_info())
+                        # cursor.execute(f"INSERT INTO ")
+
+                    case 2:
+                        return 'option 2, download:'
+
+                    case 3:
+                        return 'option 3, delete:'
+                            # Choose action for database
 
     except Error as e:
         print(e)
-
 
 def file_info():
     """Get user info and store it for mysql use"""
@@ -58,23 +84,11 @@ def file_info():
 
     print('\nHere is your file staged to upload:')
     print(f'file: {file_name}{file_ext}\n'
-        + f'file path: {file_path}')
+    + f'file path: {file_path}')
 
-# Function to decide whether to upload or delete from database
-def database_action(user_args):
-    """Case function decides to up, down or delete, 
-    once case is decided, user access should be checked"""
-    match user_args:
-        case 1:
-            print('option 1, upload:')
-            file_info()
-            
-        case 2:
-            return 'option 2, download:'
+    encodeFile(file_path)
 
-        case 3:
-            return 'option 3, delete:'
-
+    return file_name, file_ext, file_path
 
 # Refactor this to input path file to upload
 def decodedData(b64EncodedData):
@@ -93,6 +107,23 @@ def encodeFile(file_path):
         print(data)
         print(encoded)
         decodedData(encoded)
+
+        return encoded
+
+# how-to-encrypt-and-decrypt-strings-in-python
+
+def upload(file_name, file_ext, file_path):
+    """Create mysql string for uploading to server"""
+    data = open(file_path, "r").read()
+    publicKey, PrivateKey = rsa.newkeys(512)
+    encData = rsa.encrypt(data.encode(), publicKey)
+    upload_command = f"INSERT INTO file_store (filename, extension, filecontent) \
+        VALUES {file_name}, {file_ext}, {encData}"
+        
+    print(encData)
+    print(upload_command)
+
+
 
 if __name__ == '__main__':
     main()

@@ -20,12 +20,10 @@ Upload:
 - Encrypt file contents
 - Make sql command to store info in server
 - Execute command
-
-
 """
-import rsa
 import base64
 from getpass import getpass
+from cryptography.fernet import Fernet
 from mysql.connector import Error, connect
 
 
@@ -61,8 +59,7 @@ def main():
                 match user_args:
                     case 1:
                         print('option 1, upload:')
-                        file_info()
-                        upload(file_info())
+                        upload()
                         # cursor.execute(f"INSERT INTO ")
 
                     case 2:
@@ -72,6 +69,7 @@ def main():
                         return 'option 3, delete:'
                             # Choose action for database
 
+                cursor.close()
     except Error as e:
         print(e)
 
@@ -112,13 +110,30 @@ def encodeFile(file_path):
 
 # how-to-encrypt-and-decrypt-strings-in-python
 
-def upload(file_name, file_ext, file_path):
-    """Create mysql string for uploading to server"""
+def upload():
+    """
+    Get user info and store it for mysql use and
+    create mysql string for uploading to server
+    """
+    file_name = input("\nInsert file name: ")
+    file_ext = input("Insert file extension: ")
+    file_ext = "." + file_ext
+    file_path = input("Insert file path to encode and upload:\n")
+
+    print('\nHere is your file staged to upload:')
+    print(f'file: {file_name}{file_ext}\n'
+    + f'file path: {file_path}')
+
     data = open(file_path, "r", encoding="utf8").read()
-    publicKey, PrivateKey = rsa.newkeys(512)
-    encData = rsa.encrypt(data.encode(), publicKey)
+
+    # Key generation and keep in file
+    key = Fernet.generate_key()
+    with open('filekey.key', 'wb') as filekey:
+        filekey.write(key)
+
+    encData = ''
     upload_command = f"INSERT INTO file_store (filename, extension, filecontent) \
-        VALUES {file_name}, {file_ext}, {encData}"
+        VALUES {file_name}, {file_ext}, {encData};"
 
     print(encData)
     print(upload_command)

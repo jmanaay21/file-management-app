@@ -21,7 +21,7 @@ Upload:
 - Make sql command to store info in server
 - Execute command
 """
-import base64
+import shutil
 from getpass import getpass
 from cryptography.fernet import Fernet
 from mysql.connector import Error, connect
@@ -44,7 +44,7 @@ def main():
 
                 # Describes the contents of file_store table
                 # and displays information
-                cursor.execute("DESCRIBE file_store")
+                cursor.execute(f"DESCRIBE file_store")
                 myresult = cursor.fetchall()
 
                 for x in myresult:
@@ -58,14 +58,17 @@ def main():
                 # once case is decided, user access should be checked
                 match user_args:
                     case 1:
-                        print('option 1, upload:')
-                        
+                        print('\nOption 1, upload:')
+
                         cursor.execute(upload())
 
                         cursor.execute("SELECT * FROM TABLE file_store")
 
                     case 2:
-                        return 'option 2, download:'
+                        print('\n\nOption 2, download:\n')
+
+                        cursor.execute(download())
+
 
                     case 3:
                         return 'option 3, delete:'
@@ -74,41 +77,6 @@ def main():
                 cursor.close()
     except Error as e:
         print(e)
-
-def file_info():
-    """Get user info and store it for mysql use"""
-    file_name = input("\nInsert file name: ")
-    file_ext = input("Insert file extension: ")
-    file_ext = "." + file_ext
-    file_path = input("Insert file path to encode and upload:\n")
-
-    print('\nHere is your file staged to upload:')
-    print(f'file: {file_name}{file_ext}\n'
-    + f'file path: {file_path}')
-
-    encodeFile(file_path)
-
-    return file_name, file_ext, file_path
-
-# Refactor this to input path file to upload
-def decodedData(b64EncodedData):
-    """Decode encoded data when received"""
-    decodedBytes = base64.b64decode(b64EncodedData)
-    print(decodedBytes)
-    with open("exampleSaveData.md", "w") as file:
-        file.write(decodedBytes.decode("UTF-8"))
-
-
-def encodeFile(encData):
-    """Encode file before sending it off to server"""
-    data = open(encData, "r").read()
-    with open(encData, "r") as file:
-        encoded = base64.b64encode(bytes(file.read(), "UTF-8"))
-        print(data)
-        print(encoded)
-        decodedData(encoded)
-
-        return encoded
 
 # how-to-encrypt-and-decrypt-strings-in-python
 
@@ -126,7 +94,10 @@ def upload():
     print(f'file: {file_name}.{file_ext}\n'
     + f'file path: {file_path}\n\n')
 
-    data = open(file_path, "r", encoding="utf8").read()
+    # Copy file into current directory
+    shutil.copy(file_path, f"./{file_name}.{file_ext}")
+
+    stage_file = f'./{file_name}.{file_ext}'
 
     # Key generation and keep in file
     key = Fernet.generate_key()
@@ -141,35 +112,26 @@ def upload():
     fernet = Fernet(key)
 
     # Open the original file to encrypt
-    with open(f'{file_path}', 'rb') as file:
+    with open(f'{stage_file}', 'rb') as file:
         original = file.read()
 
     # Encrypting the actual file
-    encData = fernet.encrypt(original)
+    enc_data = fernet.encrypt(original)
 
     # Opening file in write mode and encrypting data
-    with open(f'{file_path}', 'wb') as encrypted_file:
-        encrypted_file.write(encData)
-
-    #DEBUG (Byte to String datatype change)
-    encData = str(encData)
-
-    # encode encData as base64
-    enc_bytes = encData.encode('ascii')
-    base64_bytes = base64.b64encode(enc_bytes)
-    base64_encData = base64_bytes.decode('ascii')
-
-
-    # Remove the '==' from the string, make sure to add back in on the download function
-    size = len(base64_encData)
-    staged_b64_encData = base64_encData[: size - 1]
-
-    print(f"\n\n\nenc_Bytes: {enc_bytes}\n\nbase64_bytes: {base64_bytes}\n\nbase64_encData: {base64_encData}\n\nStaged_b64_encData: {staged_b64_encData}\n\n")
+    with open(f'{stage_file}', 'wb') as encrypted_file:
+        encrypted_file.write(enc_data)
 
     upload_command = f"INSERT INTO file_store (filename, extension, filecontent) "\
-        f"VALUES ({file_name}, {file_ext}, {base64_encData});"
+        f"VALUES (\"{file_name}\", \"{file_ext}\", LOAD_FILE(\"/{file_name}.{file_ext}\"));"
 
+    print(upload_command)
     return upload_command
+
+def download():
+    print()
+    return "(Download command from my sql)"
+    
 
 
 

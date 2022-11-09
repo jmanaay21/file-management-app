@@ -141,18 +141,18 @@ def upload():
     fernet = Fernet(key)
 
     # Open the original file to encrypt
-    with open(f'{file_path}', 'rb') as file:
-        original = file.read()
+    with open(f'{file_path}', 'rb') as original_file:
+        original = original_file.read()
 
     # Encrypting the actual file
-    encData = fernet.encrypt(original)
+    encrypted = fernet.encrypt(original)
 
     # Opening file in write mode and encrypting data
-    with open(f'{file_path}', 'wb') as encrypted_file:
-        encrypted_file.write(encData)
+    with open(f'enc_{file_name}.{file_ext}', 'wb') as encrypted_file:
+        encrypted_file.write(encrypted)
 
     #DEBUG (Byte to String datatype change)
-    encData = str(encData)
+    encData = str(encrypted)
 
     # encode encData as base64
     enc_bytes = encData.encode('ascii')
@@ -162,12 +162,12 @@ def upload():
 
     # Remove the '==' from the string, make sure to add back in on the download function
     size = len(base64_encData)
-    staged_b64_encData = base64_encData[: size - 1]
+    staged_b64_encData = base64_encData[: size - 2]
 
     print(f"\n\n\nenc_Bytes: {enc_bytes}\n\nbase64_bytes: {base64_bytes}\n\nbase64_encData: {base64_encData}\n\nStaged_b64_encData: {staged_b64_encData}\n\n")
 
     upload_command = f"INSERT INTO file_store (filename, extension, filecontent) "\
-        f"VALUES ({file_name}, {file_ext}, {base64_encData});"
+        f"VALUES (\"{file_name}\", \"{file_ext}\", \"{encrypted}\");"
 
     return upload_command
 

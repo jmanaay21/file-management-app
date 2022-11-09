@@ -20,17 +20,17 @@ App (file management):
 - authentication (LDAP)	
 - authorization (access control)
 - logging/auditability
-
-Must run and be developed in LinuxOS
+- pip install rsa
+- Must run and be developed in LinuxOS
 
 ### Approach
 - MySQL approach for data storage/file manipulation
 - Use LDAP as an Authentication and Authorization system
-- Docker will be used as a container for LDAP
-- Create local mySQL server on VM (Maybe create a remote server on home PC)
+- Create server on home PC
 - Connect to it and make sure you can see contents and access
 - Maybe use OpenVPN for server security
-
+- Change in approach to a sftp server
+- LLDAP insread of openldap
 
 ### Resources
 - [Getting started with MySQL](https://dev.mysql.com/doc/mysql-apt-repo-quick-guide/en/)
@@ -46,6 +46,8 @@ Must run and be developed in LinuxOS
 - [MySQL to Python](https://dev.mysql.com/doc/connector-python/en/) and [example](https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html)
 
 - [Python to LDAP](https://www.python-ldap.org/en/python-ldap-3.4.2/)
+
+- [Encrypt and decrypt files in python]()
 
 key thats unique and object that represents the file
 user table (name and password) and way to associate user with roles)

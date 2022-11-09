@@ -1,6 +1,9 @@
 """
 This is a py file that will contain the functions used for security
 meaning LDAP implementation, encoding, decoding, hashing, etc.
+
+Make class to contain functions for encoding and storing commands
+to be executed on main.py
 """
 import base64
 

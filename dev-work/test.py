@@ -8,9 +8,9 @@ TO DO:
     (maybe even a seperate class)
 - Add different users/ access control (LDAP)
 - Implement encode and decode functions to
-    add to file tables from python 
+    add to file tables from python
 - Create strinf builder for a sql command
-    so user doesn't have direct access to 
+    so user doesn't have direct access to
     inserting mysql commands
 
 STRUCTURE
@@ -59,8 +59,10 @@ def main():
                 match user_args:
                     case 1:
                         print('option 1, upload:')
-                        upload()
-                        # cursor.execute(f"INSERT INTO ")
+                        
+                        cursor.execute(upload())
+
+                        cursor.execute("SELECT * FROM TABLE file_store")
 
                     case 2:
                         return 'option 2, download:'
@@ -97,10 +99,10 @@ def decodedData(b64EncodedData):
         file.write(decodedBytes.decode("UTF-8"))
 
 
-def encodeFile(file_path):
+def encodeFile(encData):
     """Encode file before sending it off to server"""
-    data = open(file_path, "r").read()
-    with open(file_path, "r") as file:
+    data = open(encData, "r").read()
+    with open(encData, "r") as file:
         encoded = base64.b64encode(bytes(file.read(), "UTF-8"))
         print(data)
         print(encoded)
@@ -117,12 +119,12 @@ def upload():
     """
     file_name = input("\nInsert file name: ")
     file_ext = input("Insert file extension: ")
-    file_ext = "." + file_ext
+    # file_ext = "." + file_ext
     file_path = input("Insert file path to encode and upload:\n")
 
     print('\nHere is your file staged to upload:')
-    print(f'file: {file_name}{file_ext}\n'
-    + f'file path: {file_path}')
+    print(f'file: {file_name}.{file_ext}\n'
+    + f'file path: {file_path}\n\n')
 
     data = open(file_path, "r", encoding="utf8").read()
 
@@ -131,12 +133,43 @@ def upload():
     with open('filekey.key', 'wb') as filekey:
         filekey.write(key)
 
-    encData = ''
-    upload_command = f"INSERT INTO file_store (filename, extension, filecontent) \
-        VALUES {file_name}, {file_ext}, {encData};"
+    # Opening the key
+    with open('filekey.key', 'rb') as filekey:
+        key = filekey.read()
 
-    print(encData)
-    print(upload_command)
+    # Using the generated key
+    fernet = Fernet(key)
+
+    # Open the original file to encrypt
+    with open(f'{file_path}', 'rb') as file:
+        original = file.read()
+
+    # Encrypting the actual file
+    encData = fernet.encrypt(original)
+
+    # Opening file in write mode and encrypting data
+    with open(f'{file_path}', 'wb') as encrypted_file:
+        encrypted_file.write(encData)
+
+    #DEBUG (Byte to String datatype change)
+    encData = str(encData)
+
+    # encode encData as base64
+    enc_bytes = encData.encode('ascii')
+    base64_bytes = base64.b64encode(enc_bytes)
+    base64_encData = base64_bytes.decode('ascii')
+
+
+    # Remove the '==' from the string, make sure to add back in on the download function
+    size = len(base64_encData)
+    staged_b64_encData = base64_encData[: size - 1]
+
+    print(f"\n\n\nenc_Bytes: {enc_bytes}\n\nbase64_bytes: {base64_bytes}\n\nbase64_encData: {base64_encData}\n\nStaged_b64_encData: {staged_b64_encData}\n\n")
+
+    upload_command = f"INSERT INTO file_store (filename, extension, filecontent) "\
+        f"VALUES ({file_name}, {file_ext}, {base64_encData});"
+
+    return upload_command
 
 
 

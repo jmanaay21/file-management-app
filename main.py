@@ -123,7 +123,7 @@ def upload():
         encrypted_file.write(enc_data)
 
     upload_command = f"INSERT INTO file_store (filename, extension, filecontent) "\
-        f"VALUES (\"{file_name}\", \"{file_ext}\", LOAD_FILE(\"/{file_name}.{file_ext}\"));"
+        f"VALUES (\"{file_name}\", \"{file_ext}\", LOAD_FILE(\'/{file_name}.{file_ext}\'));"
 
     print(upload_command)
     return upload_command

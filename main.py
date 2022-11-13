@@ -60,6 +60,8 @@ def main():
                     case 1:
                         print('\nOption 1, upload:')
 
+                        # Set upload value up temporarily to allow file transfer
+                        cursor.execute("SET GLOBAL max_allowed_packet=1073741824;")
                         cursor.execute(upload())
 
                         cursor.execute("SELECT * FROM TABLE file_store")
@@ -119,11 +121,11 @@ def upload():
     enc_data = fernet.encrypt(original)
 
     # Opening file in write mode and encrypting data
-    with open(f'{stage_file}', 'wb') as encrypted_file:
+    with open(f'/var/lib/mysql-files/{file_name}.{file_ext}', 'wb') as encrypted_file:
         encrypted_file.write(enc_data)
 
     upload_command = f"INSERT INTO file_store (filename, extension, filecontent) "\
-        f"VALUES (\"{file_name}\", \"{file_ext}\", LOAD_FILE(\'/{file_name}.{file_ext}\'));"
+        f"VALUES (\"{file_name}\", \"{file_ext}\", LOAD_FILE(\'/var/lib/mysql-files/{file_name}.{file_ext}\'));"
 
     print(upload_command)
     return upload_command
@@ -131,8 +133,6 @@ def upload():
 def download():
     print()
     return "(Download command from my sql)"
-    
-
 
 
 if __name__ == '__main__':

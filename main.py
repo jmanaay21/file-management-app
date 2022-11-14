@@ -121,11 +121,11 @@ def upload():
     enc_data = fernet.encrypt(original)
 
     # Opening file in write mode and encrypting data
-    with open(f'/var/lib/mysql-files/{file_name}.{file_ext}', 'wb') as encrypted_file:
+    with open(f'{stage_file}', 'wb') as encrypted_file:
         encrypted_file.write(enc_data)
 
     upload_command = f"INSERT INTO file_store (filename, extension, filecontent) "\
-        f"VALUES (\"{file_name}\", \"{file_ext}\", LOAD_FILE(\'/var/lib/mysql-files/{file_name}.{file_ext}\'));"
+        f"VALUES (\'{file_name}\', \'{file_ext}\', LOAD_FILE(\'{stage_file}\'));"
 
     print(upload_command)
     return upload_command

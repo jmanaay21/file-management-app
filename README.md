@@ -49,6 +49,8 @@ App (file management):
 
 - [Encrypt and decrypt files in python]()
 
+- [Connect python to LDAP Server](https://medium.com/analytics-vidhya/crud-operations-for-openldap-using-python-ldap3-46393e3122af)
+
 key thats unique and object that represents the file
 user table (name and password) and way to associate user with roles)
 
@@ -72,3 +74,8 @@ Check Status of Server
 
 Restart MySQL Server
 `systemctl restart mysql`
+
+### Dependenies
+- my-sql-connector-python
+- ldap3
+- 

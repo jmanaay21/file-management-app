@@ -63,18 +63,19 @@ def main():
                         # Set upload value up temporarily to allow file transfer
                         cursor.execute("SET GLOBAL max_allowed_packet=1073741824;")
                         cursor.execute(upload())
-
-                        cursor.execute("SELECT * FROM TABLE file_store")
+                        connection.commit()
+                        cursor.execute("SELECT fileid, filename, extension FROM fileserver.file_store;")
 
                     case 2:
                         print('\n\nOption 2, download:\n')
 
                         cursor.execute(download())
 
-
                     case 3:
-                        return 'option 3, delete:'
-                            # Choose action for database
+                        print('\n\nOption 3, delete:\n')
+
+                        cursor.execute(delete())
+                        return 'option 3, delete:'# Choose action for database
 
                 cursor.close()
     except Error as e:
@@ -124,15 +125,24 @@ def upload():
     with open(f'{stage_file}', 'wb') as encrypted_file:
         encrypted_file.write(enc_data)
 
+    contents = open(stage_file, 'r').read()
+    
     upload_command = f"INSERT INTO file_store (filename, extension, filecontent) "\
-        f"VALUES (\'{file_name}\', \'{file_ext}\', LOAD_FILE(\'{stage_file}\'));"
+        f"VALUES (\'{file_name}\', \'{file_ext}\', \'{contents}\');" # Using string inside file as data on the db
+        # f"VALUES (\'{file_name}\', \'{file_ext}\', LOAD_FILE(\'{stage_file}\'));"
 
-    print(upload_command)
     return upload_command
 
 def download():
     print()
     return "(Download command from my sql)"
+
+def delete():
+    """
+    List table for users to see, ask for which row they would want to delete
+    Ask if they are sure again, return the command to delete into main
+    """
+    return "DELETE"
 
 
 if __name__ == '__main__':

@@ -78,4 +78,7 @@ Restart MySQL Server
 ### Dependenies
 - my-sql-connector-python
 - ldap3
-- 
+
+## phpLDAPadmin admin login
+cn=admin,dc=example,dc=com
+

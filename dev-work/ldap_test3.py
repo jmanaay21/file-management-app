@@ -3,7 +3,7 @@ import sys
 
 
 l = ldap.initialize('ldap://localhost')
-binddn = "cn=Andy,ou=People,dc=fileserver,dc=net"
+binddn = "uid=andy,ou=People,dc=fileserver,dc=net"
 pw = "password"
 basedn = "ou=People,dc=filserver,dc=net"
 searchFilter = "(&(gidNumber=5000)(objectClass=posixAccount))"

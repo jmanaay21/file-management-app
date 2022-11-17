@@ -1,3 +1,7 @@
+"""
+Will implement this version of ldap, will cut down on unecessary
+code and contain the users attributes (uidNumber, gidNumber)
+"""
 import ldap
 from getpass import getpass
 

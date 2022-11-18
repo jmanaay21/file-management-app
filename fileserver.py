@@ -41,7 +41,7 @@ def user_login():
     for n in UID:
         if n.isdecimal():
             ID = ID + n
-    if is_authenticated: print(f"Welcome {cn}, you are goupID number {ID}.")
+    if is_authenticated: print(f"Welcome {cn}, you are goupID number {ID}.\n")
     return ID, is_authenticated
 
 # Once authenticated, server function will run
@@ -63,7 +63,7 @@ def server_use():
                 password=("Moomoo22@"),
                 database="fileserver"
             ) as connection:
-                with connection.cursor() as cursor:
+                with connection.cursor(buffered=True) as cursor:
                     # Moves to the fileserver table
                     cursor.execute("USE fileserver")
 
@@ -71,7 +71,6 @@ def server_use():
                     # and displays information
                     cursor.execute(f"DESCRIBE file_store")
                     myresult = cursor.fetchall()
-
                     for x in myresult:
                         print(x)
 
@@ -90,8 +89,13 @@ def server_use():
                                 cursor.execute("SET GLOBAL max_allowed_packet=1073741824;")
                                 cursor.execute(upload())
                                 connection.commit()
+
                                 cursor.execute("SELECT fileid, filename, extension FROM fileserver.file_store;")
                                 connection.commit()
+                                table_contents = cursor.fetchall()
+                                for x in table_contents:
+                                    print(x)
+
                             else:
                                 print("\nYou are not authorized to upload.\n")
                                 exit()
@@ -100,7 +104,17 @@ def server_use():
                             if user_gidnum == '4000' or user_gidnum == '5000':
                                 print('\n\nOption 2, download:\n')
 
+                                cursor.execute("SELECT fileid, filename, extension FROM fileserver.file_store;")
+                                connection.commit()
+                                table_contents = cursor.fetchall()
+                                for x in table_contents:
+                                    print(x)
+
                                 cursor.execute(download())
+                                file_contents = cursor.fetchall()
+                                create_file(file_contents)
+                                connection.commit()
+
                             else:
                                 print("\nYou are not authorized to download.\n")
                                 exit()
@@ -108,10 +122,17 @@ def server_use():
                         case 3:
                             if user_gidnum == '5000':
                                 print('\n\nOption 3, delete:\n')
+
                                 cursor.execute("SELECT fileid, filename, extension FROM fileserver.file_store;")
                                 connection.commit()
+                                table_contents = cursor.fetchall()
+                                for x in table_contents:
+                                    print(x)
+                                
                                 cursor.execute(delete())
                                 connection.commit()
+
+
                             else:
                                 print("\nYou are not authorized to delete.\n")
                                 exit()
@@ -141,11 +162,6 @@ def upload():
 
     stage_file = f'./{file_name}.{file_ext}'
 
-    # Key generation and keep in file
-    key = Fernet.generate_key()
-    with open('filekey.key', 'wb') as filekey:
-        filekey.write(key)
-
     # Opening the key
     with open('filekey.key', 'rb') as filekey:
         key = filekey.read()
@@ -173,17 +189,55 @@ def upload():
     return upload_command
 
 def download():
-    print()
-    return "(Download command from my sql)"
+    fileid = input("\nIn localhost/list_files.php there is the current database shown.\nWhich file in the table would you like to download? (Use fileid): ")
+    download_command = f"SELECT filename, extension, filecontent from file_store where fileid={fileid};"
+    return download_command
 
 def delete():
     """
     List table for users to see, ask for which row they would want to delete
     Ask if they are sure again, return the command to delete into main
     """
-    fileid = input("In localhost/list_files.php there is the current database shown.\nWhich file in the table would you like to delete?(Use fileid): ") 
+    fileid = input("\nIn localhost/list_files.php there is the current database shown.\nWhich file in the table would you like to delete?(Use fileid): ") 
     delete_command = f"DELETE FROM file_store WHERE fileid={fileid};"
     return delete_command
+
+def create_file(file_contents):
+    file_contents_split = str(file_contents).split(", ")
+    file_name = file_contents_split[0]
+    file_ext = file_contents_split[1]
+    file_content = file_contents_split[2]
+
+    # Format strings to stage for file making
+    file_name = file_name.replace("[(", "")
+    file_name = file_name.replace("'", "")
+
+    file_ext = file_ext.replace("'", "")
+
+    file_content = file_content[:-3]
+    file_content = file_content[2:]
+
+    stage_file = f"{file_name}.{file_ext}"
+    print(f"\nFile name: {file_name}\nFile ext: {file_ext}\nFile content: {file_content}")
+    # Creating file
+    new_file = open(f"{file_name}.{file_ext}", "w")
+    new_file.write(file_content)
+    new_file.close()
+
+    # Actually using key to decrypt file
+    with open('filekey.key', 'rb') as filekey:
+        key = filekey.read()
+
+    fernet = Fernet(key)
+
+    with open(stage_file, 'rb') as enc_file:
+        encrypted = enc_file.read()
+
+    decrypted = fernet.decrypt(encrypted)
+
+    with open(stage_file, 'wb') as dec_file:
+        dec_file.write(decrypted)
+
 
 if __name__ == "__main__":
     server_use()

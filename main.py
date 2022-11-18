@@ -65,10 +65,19 @@ def main():
                         cursor.execute(upload())
                         connection.commit()
                         cursor.execute("SELECT fileid, filename, extension FROM fileserver.file_store;")
+                        # Show table
+                        myresult = cursor.fetchall()
+                        for x in myresult:
+                            print(x)
 
                     case 2:
                         print('\n\nOption 2, download:\n')
-
+                        cursor.execute("SELECT fileid, filename, extension FROM fileserver.file_store;")
+                        # Show table
+                        myresult = cursor.fetchall()
+                        for x in myresult:
+                            print(x)
+                            
                         cursor.execute(download())
 
                     case 3:

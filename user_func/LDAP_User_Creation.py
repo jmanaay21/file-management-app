@@ -6,6 +6,7 @@ print("Welcome to user creation")
 user = input("Enter the user ID (name): ")
 sn = input("Enter the last name: ")
 groupID = input("Enter the group ID number: ")
+userID = input("Enter a user ID number")
 password = input("Enter a password: ")
 
 uid = user
@@ -18,6 +19,7 @@ fileCreate = f"dn: uid={user},ou=People,dc=fileserver,dc=net\n" \
     f"sn: {sn}\n" \
     f"cn: {user} {sn}\n" \
     f"displayName: {user} {sn}\n" \
+    f"uidNumber: {userID}\n" \
     f"gidNumber: {groupID}\n" \
     f"userPassword: {password}\n" \
     f"gecos: {user} {sn}\n" \

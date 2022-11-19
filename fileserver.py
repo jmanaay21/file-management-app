@@ -54,6 +54,18 @@ def server_use():
     # Setting variables for easier readability
     is_authenticated = user_cred[1]
     user_gidnum = user_cred[0]
+
+    # Decrypt db pass
+    with open('filekey.key', 'rb') as filekey:
+        key = filekey.read()
+    fernet = Fernet(key)
+
+    with open('mysqlpass.txt', 'rb') as enc_file:
+        encrypted = enc_file.read()
+    sqlpass = fernet.decrypt(encrypted)
+    sqlpass = str(sqlpass)
+    sqlpass = sqlpass[2:-1]
+    sqlpass = sqlpass + '@'
     
     if is_authenticated:
         try:
@@ -61,7 +73,7 @@ def server_use():
                 # Setting up connection to server database
                 host="localhost",
                 user=("root"),
-                password=("Moomoo22@"),
+                password=(sqlpass),
                 database="fileserver"
             ) as connection:
                 with connection.cursor(buffered=True) as cursor:

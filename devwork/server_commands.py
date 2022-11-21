@@ -1,5 +1,13 @@
 import shutil
+import logging
 from cryptography.fernet import Fernet
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="{asctime} {levelname:<8} {message}",
+    style='{'
+    filename='%slog' % __file__[-2],
+    filemode='a'
 
 def upload():
     """
@@ -42,6 +50,8 @@ def upload():
     
     upload_command = f"INSERT INTO file_store (filename, extension, filecontent) "\
         f"VALUES (\'{file_name}\', \'{file_ext}\', \'{contents}\');"
+    
+    logging.info(f"File {file_name} uploaded")
 
     return upload_command
 
@@ -79,6 +89,7 @@ def create_file(file_contents):
     new_file = open(f"{file_name}.{file_ext}", "w")
     new_file.write(file_content)
     new_file.close()
+    logging.info(f"File {file_name} created")
 
     # Actually using key to decrypt file
     with open('filekey.key', 'rb') as filekey:

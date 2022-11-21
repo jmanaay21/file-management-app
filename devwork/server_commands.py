@@ -3,12 +3,12 @@ import logging
 from cryptography.fernet import Fernet
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="{asctime} {levelname:<8} {message}",
-    style='{'
+    style='{',
     filename='%slog' % __file__[-2],
     filemode='a'
-
+)
 def upload():
     """
     Get user info and store it for mysql use and

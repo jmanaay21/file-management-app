@@ -10,14 +10,7 @@ from cryptography.fernet import Fernet
 from mysql.connector import Error, connect
 from devwork.server_commands import *
 
-#Logging config file is what creates log
-logging.basicConfig( 
-    level=logging.DEBUG,
-    format="{asctime} {levelname:<8} {message}",
-    style='{',
-    filename='%slog' % __file__[-2],
-    filemode='a' 
-)
+
 # Dealing with ldap first for authentification before initializing
 # connection to mysql server
 def user_login():

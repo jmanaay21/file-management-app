@@ -48,7 +48,7 @@ def user_login():
             ID = ID + n
     if is_authenticated: 
         logging.info(f"{cn} has logged in with GID {ID}")
-        print(f"Welcome {cn}, you are goupID number {ID}.\n")
+        print(f"Welcome {cn}, you are groupID number {ID}.\n")
     return ID, is_authenticated
 
 # Once authenticated, server function will run

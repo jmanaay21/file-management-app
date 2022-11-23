@@ -4,7 +4,6 @@ Main program in which we will run build from
 import ldap
 import logging
 from getpass import getpass
-import shutil
 from getpass import getpass
 from cryptography.fernet import Fernet
 from mysql.connector import Error, connect
@@ -61,19 +60,19 @@ def server_use():
     is_authenticated = user_cred[1]
     user_gidnum = user_cred[0]
 
-    # Decrypt db pass
-    with open('filekey.key', 'rb') as filekey:
-        key = filekey.read()
-    fernet = Fernet(key)
-
-    with open('mysqlpass.txt', 'rb') as enc_file:
-        encrypted = enc_file.read()
-    sqlpass = fernet.decrypt(encrypted)
-    sqlpass = str(sqlpass)
-    sqlpass = sqlpass[2:-1]
-    sqlpass = sqlpass + '@'
-    
     if is_authenticated:
+        # Use mysql pasword if autheticated
+        with open('filekey.key', 'rb') as filekey:
+            key = filekey.read()
+        fernet = Fernet(key)
+
+        with open('mysqlpass.txt', 'rb') as enc_file:
+            encrypted = enc_file.read()
+        sqlpass = fernet.decrypt(encrypted)
+        sqlpass = str(sqlpass)
+        sqlpass = sqlpass[2:-1]
+        sqlpass = sqlpass + '@'
+
         try:
             with connect(
                 # Setting up connection to server database
@@ -114,6 +113,8 @@ def server_use():
                                 table_contents = cursor.fetchall()
                                 for x in table_contents:
                                     print(x)
+                                print(f"\nFile successfully uploaded to server.\n")
+                                logging.info('File has been uploaded to database')
 
                             else:
                                 logging.warning("Unauthorized upload attempt")
@@ -135,6 +136,9 @@ def server_use():
                                 create_file(file_contents)
                                 connection.commit()
 
+                                print("\nFile successfully downloaded, check current directory.\n")
+                                logging.info('File has been downloaded from database')
+
                             else:
                                 logging.warning("Unuthorized download attempt")
                                 print("\nYou are not authorized to download.\n")
@@ -153,7 +157,8 @@ def server_use():
                                 cursor.execute(delete())
                                 connection.commit()
 
-
+                                print("\nFile successfully deleted, check localhost/list_files.php for list of file in database\n")
+                                logging.info('File has been deleted from database')
                             else:
                                 logging.warning("Unauthorized delete attempt")
                                 print("\nYou are not authorized to delete.\n")

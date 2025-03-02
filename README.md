@@ -30,7 +30,7 @@ App (file management):
 - Connect to it and make sure you can see contents and access
 - Maybe use OpenVPN for server security
 - Change in approach to a sftp server
-- LLDAP insread of openldap
+- LLDAP instead of openldap
 
 ### Resources
 - [Getting started with MySQL](https://dev.mysql.com/doc/mysql-apt-repo-quick-guide/en/)
